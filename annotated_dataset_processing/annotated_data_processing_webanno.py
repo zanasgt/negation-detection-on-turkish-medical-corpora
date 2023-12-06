@@ -5,12 +5,29 @@ Created on Sun Nov 26 17:22:34 2023
 @author: cardcentric
 """
 
+import os
 import pandas as pd
 
-def parse_neg_element(elements):
-  result = [element.split('-')[-1] for element in elements]
-  return result
+# def parse_neg_element(elements):
+#   result = [element.split('-')[-1] for element in elements]
+#   return result
 
+def exract_columns_of_tsv(file_path):
+  columns = []
+  with open(file_path, 'r') as f:
+    for line in f.readline():
+      if line.startswith('#T_SP='):
+        labels = line.split('=')[1].split('|')
+        
+# if all_identifiers unite all with ';'
+def find_target_word(df_sentence, all_identifiers):
+  identifiers = all_identifiers.split(';')
+  for identifier in identifiers:
+    # Find the index of the target value in the 'Value' column
+    if identifier.contains('.'):
+      identifier = identifier.split('.')[0]
+    index = df_sentence[df_sentence[0] == identifier].index[0]
+    
 def parse_webanno_tsv(tsv_path):
   # Read the TSV file into a DataFrame
   try:
@@ -27,11 +44,14 @@ def parse_webanno_tsv(tsv_path):
   df_result = pd.DataFrame()
   columns = ['sentence_id', 'sentence', 'cue', 'cue_type', 'scope', 'scope_index', 'focus', 'focus_index', 'event', 'event_index', 'cp']
   
-  # neg. type:  column 17
-  # scope:      column 19
-  # focus:      column 16
-  # event:      column 14
-  # cor. part.: column 12
+  # coor. parti.  :      3
+  # scope         :      4
+  # event         :      5
+  # neg. type     :      column 17
+  # scope pointer :      column 19
+  # focus pointer :      column 16
+  # event pointer :      column 14
+  # cor. part. pt :      column 12
   for i in range(1, sentence_length+1):
     df_sentence = df[df['sentence_id'] == i]
     sentence_text = ' '.join(df_sentence[2])
@@ -39,11 +59,23 @@ def parse_webanno_tsv(tsv_path):
     if (df_sentence[20] == '*').any():
       df_negation = df_sentence[df_sentence[20] == '*']
       for index, row in df_negation.iterrows():
+        
+        # Find negated element on filtered df_negation
         negation_type   = df_negation[17]
-        scope_elements  = parse_neg_element(row[19].split(';'))
-        focus_elements  = parse_neg_element(row[16].split(';'))
-        event_elements  = parse_neg_element(row[14].split(';'))
-        cp_elements     = parse_neg_element(row[12].split(';'))
+        # scope_elements  = parse_neg_element(row[19].split(';'))
+        # focus_elements  = parse_neg_element(row[16].split(';'))
+        # event_elements  = parse_neg_element(row[14].split(';'))
+        # cp_elements     = parse_neg_element(row[12].split(';'))
+        
+        # extract element of negation
+        scope_elements  = row[19].split(';')
+        focus_elements  = row[16].split(';')
+        event_elements  = row[14].split(';')
+        cp_elements     = row[12].split(';')
+        
+        # find these parts in df_sentence and extract them
+        
+        
     else:
       b=5
       
@@ -76,4 +108,5 @@ def parse_webanno_tsv(tsv_path):
   return df
   
 # Replace 'your_webanno_file.tsv' with the path to your WebAnno TSV file
-a = parse_webanno_tsv(r'C:\Users\cardcentric\Downloads\756488.tsv')
+# a = parse_webanno_tsv(r'C:\Users\cardcentric\Downloads\756488.tsv')
+a = parse_webanno_tsv(os.path.join(os.path.dirname(__file__), '479299.tsv'))

@@ -6,18 +6,28 @@ Created on Thu Nov  9 22:22:38 2023
 """
 
 from cassis import *
+from dkpro_cassis_tools import load_cas_from_zip_file
+import pandas as pd
 
 class AnnotationData:
   def __init__(self):
     self.documents = []
-    self.negation_count = {
-        "morphological": 0,
-        "lexical": 0,
-        "syntactical": 0,
-        "_me": 0,
-        "_sız": 0
-        }
-    self.multi_negation_count = 0
+    self.labeled_dataset = pd.DataFrame(columns=['sentence_id', 'token_id', 'cue', 'scope', 'focus', 'event'])
+    self.indexed_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_text', 'cue', 'scope', 'focus', 'event'])
+    self.detail_dataset = pd.DataFrame(columns=['sentence_id', 'token_id', 'token', 
+                                           'cue', 'cue_type', 'cue_word', 'cue_index', 'cue_word_index',
+                                           'scope', 'scope_index', 'scope_word', 'scope_word_index',
+                                           'focus', 'focus_index', 'focus_word', 'focus_word_index',
+                                           'event', 'event_index', 'event_word', 'event_word_index'])
+    # this part will be done with data visualization on DataFrame
+    # self.negation_count = {
+    #     "morphological": 0,
+    #     "lexical": 0,
+    #     "syntactical": 0,
+    #     "_me": 0,
+    #     "_sız": 0
+    #     }
+    # self.multi_negation_count = 0
 
   def add_document(self, document):
     self.documents.append(document)
@@ -29,19 +39,21 @@ class AnnotationData:
     return dataset
   
 class Document():
-  def __init__(self, xmi_path, typesystem_path, dataset: AnnotationData):
+  def __init__(self, xmi_path, dataset: AnnotationData):
     self.xmi_path = xmi_path
-    self.typesystem_path = typesystem_path
+    # self.typesystem_path = typesystem_path
     self.cas = None
     self.negation_count = {}
-    self.dataset = dataset
+    # self.dataset = dataset
 
   def load(self):
-    with open(self.typesystem_path, 'rb') as f:
-      typesystem = load_typesystem(f)
+    with open(xmi_path, 'rb') as f:
+      self.cas = load_cas_from_zip_file(f)
+    # with open(self.typesystem_path, 'rb') as f:
+    #   typesystem = load_typesystem(f)
 
-    with open(self.xmi_path, 'rb') as f:
-      self.cas = load_cas_from_xmi(f, typesystem=typesystem)
+    # with open(self.xmi_path, 'rb') as f:
+    #   self.cas = load_cas_from_xmi(f, typesystem=typesystem)
 
   def load_negation_features(self, feature_list):
     if feature_list:
@@ -100,20 +112,21 @@ class Document():
     #print(neg_in_doc[2])
     return neg_in_doc
   
-  def count_negation(self, neg_marker: dict):
-    if neg_marker["neg_marker_type"] == 'NegMorMarker':
-      self.dataset.negation_count["morphological"] += 1
-    elif neg_marker["neg_marker_type"] == 'NegLexMarker':
-      self.dataset.negation_count["lexical"] += 1
-    elif neg_marker["neg_marker_type"] == 'NegSynMarker':
-      self.dataset.negation_count["syntactical"] += 1
-    else:
-      print(f'Type error with {neg_marker["neg_marker"]}...\n')
+  # This part will be done with data visualization part
+  # def count_negation(self, neg_marker: dict):
+  #   if neg_marker["neg_marker_type"] == 'NegMorMarker':
+  #     self.dataset.negation_count["morphological"] += 1
+  #   elif neg_marker["neg_marker_type"] == 'NegLexMarker':
+  #     self.dataset.negation_count["lexical"] += 1
+  #   elif neg_marker["neg_marker_type"] == 'NegSynMarker':
+  #     self.dataset.negation_count["syntactical"] += 1
+  #   else:
+  #     print(f'Type error with {neg_marker["neg_marker"]}...\n')
     
-    if neg_marker["neg_marker"] == 'ma' or neg_marker["neg_marker"] == 'me' or neg_marker["neg_marker"] == 'mı' or neg_marker["neg_marker"] == 'mi':
-      self.dataset.negation_count["_me"] += 1
-    elif neg_marker["neg_marker"] == 'sız' or neg_marker["neg_marker"] == 'siz' or neg_marker["neg_marker"] == 'suz' or neg_marker["neg_marker"] == 'süz':
-      self.dataset.negation_count["_sız"] += 1
+  #   if neg_marker["neg_marker"] == 'ma' or neg_marker["neg_marker"] == 'me' or neg_marker["neg_marker"] == 'mı' or neg_marker["neg_marker"] == 'mi':
+  #     self.dataset.negation_count["_me"] += 1
+  #   elif neg_marker["neg_marker"] == 'sız' or neg_marker["neg_marker"] == 'siz' or neg_marker["neg_marker"] == 'suz' or neg_marker["neg_marker"] == 'süz':
+  #     self.dataset.negation_count["_sız"] += 1
   
   def find_tokens(self,sentence, reset_indexes = True):
     token_id = 0
@@ -145,7 +158,7 @@ class Document():
       dataset_dict = []
       sentence_id = 0
       
-      
+      a = self.cas.select('de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence')
       for sentence in self.cas.select('de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence'):   
         sentence_dict = {}
         sentence_neg_markers = [item for item in negations_in_doc 
@@ -200,13 +213,15 @@ if __name__ == "__main__":
     annotation_data = AnnotationData()
 
     # Replace these paths with your actual file paths
-    xmi_paths = [r'C:\Users\cardcentric\Downloads\796005\796005.xmi']
+    xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\756488.zip'
     typesystem_paths = [r"C:\Users\cardcentric\Downloads\796005\TypeSystem.xml"]
 
-    for xmi_path, typesystem_path in zip(xmi_paths, typesystem_paths):
-        document = Document(xmi_path, typesystem_path, annotation_data)
-        document.load()
-        annotation_data.add_document(document)
-
+    # for xmi_path, typesystem_path in zip(xmi_paths, typesystem_paths):
+    #     document = Document(xmi_path, annotation_data)
+    #     document.load()
+    #     annotation_data.add_document(document)
+    document = Document(xmi_path, annotation_data)
+    document.load()
+    annotation_data.add_document(document)
     dataset = annotation_data.process_all_documents(resetIndexes=False)
-    print(annotation_data.negation_count, annotation_data.multi_negation_count)
+    #print(annotation_data.negation_count, annotation_data.multi_negation_count)

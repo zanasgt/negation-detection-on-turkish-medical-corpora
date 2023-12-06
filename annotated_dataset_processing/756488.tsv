@@ -1,0 +1,252 @@
+#FORMAT=WebAnno TSV 3.3
+#T_SP=webanno.custom.CoordinationParticle|value
+#T_SP=webanno.custom.Negation|value
+#T_SP=webanno.custom.NegationEvent|ROLE_webanno.custom.NegationEvent:eventSpan_webanno.custom.NegationEventEventSpanLink|webanno.custom.NegationEventSpanContinuesWith|value
+#T_SP=webanno.custom.NegationFocus|ROLE_webanno.custom.NegationFocus:focusSpan_webanno.custom.NegationFocusFocusSpanLink|webanno.custom.NegationFocusSpanContinuesWith|value
+#T_SP=webanno.custom.NegationMarker|ROLE_webanno.custom.NegationMarker:coordinationparticle_webanno.custom.NegationMarkerCoordinationparticleLink|webanno.custom.CoordinationParticle|ROLE_webanno.custom.NegationMarker:event_webanno.custom.NegationMarkerEventLink|webanno.custom.NegationEvent|ROLE_webanno.custom.NegationMarker:focus_webanno.custom.NegationMarkerFocusLink|webanno.custom.NegationFocus|markerType|ROLE_webanno.custom.NegationMarker:scope_webanno.custom.NegationMarkerScopeLink|webanno.custom.Negation|value
+
+
+#Text=ÖZET
+1-1	0-4	ÖZET	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+
+#Text=Diyabetli bireylerde diyabetik ayak ülserleri gelişme riski sağlıklı bireylere göre %15 daha fazladır.
+2-1	5-14	Diyabetli	_	*[3]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+2-2	15-25	bireylerde	_	*[3]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+2-3	26-35	diyabetik	_	*[3]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+2-3.1	26-33	diyabet	_	_	_	_	_	_	*	*	_	_	_	_	_	_	_	_	_	_	
+2-4	36-40	ayak	_	*[3]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+2-5	41-50	ülserleri	_	*[3]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+2-6	51-58	gelişme	_	*[3]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+2-7	59-64	riski	*	*[3]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+2-8	65-73	sağlıklı	_	*[3]	_	_	_	_[12]	*	*[12]	_	_	_	_	_	_	_	_	_	_	
+2-9	74-83	bireylere	_	*[3]	_	_	_	_[12]	*	*[12]	_	_	_	_	_	_	_	_	_	_	
+2-10	84-88	göre	_	*[3]	_	_	_	_[12]	*	*[12]	_	_	_	_	_	_	_	_	_	_	
+2-11	89-90	%	_	*[3]	_	_	_	_[12]	*	*[12]	_	_	_	_	_	_	_	_	_	_	
+2-12	90-92	15	_	*[3]	_	_	_	_[12]	*	*[12]	_	_	_	_	_	_	_	_	_	_	
+2-13	93-97	daha	_	*[3]	_	*	*	_[12]	*	*[12]	_	_	_	_	_	_	_	_	_	_	
+2-14	98-106	fazladır	_	_	_	_	_	_	_	_	coordination particle	2-7	partOfEvent	2-13	isAnotherFocus;isAnotherFocus	2-3.1;2-8[12]	NegLexMarker	partOfScope	2-1[3]	*	
+2-15	106-107	.	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+
+#Text=Diyabetik ayak ülserleri, bireylerde fiziksel, duygusal ve sosyal işlevleri azaltmasının yanı sıra, ekonomik açıdan da maliyetli olabilmektedir.
+3-1	108-117	Diyabetik	_	*[4]	_	_	_	_	*	*	_	_	_	_	_	_	_	_	_	_	
+3-2	118-122	ayak	_	*[4]	_	_	_	_	*	*	_	_	_	_	_	_	_	_	_	_	
+3-3	123-132	ülserleri	_	_	_	_	_	_	_	_	coordination particle	3-5[1]	partOfEvent	3-5.1	isAnotherFocus;isAnotherFocus;isAnotherFocus	3-2;3-1;3-6	NegLexMarker	partOfScope;partOfScope	3-1[4];3-5[5]	*	
+3-4	132-133	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-5	134-144	bireylerde	*[1]	*[5]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-5.1	134-140	bireyl	_	_	_	*	*	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-6	145-153	fiziksel	*[1]	*[5]	_	_	_	_	*	*	_	_	_	_	_	_	_	_	_	_	
+3-7	153-154	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-8	155-163	duygusal	_	*[6]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-9	164-166	ve	_	*[6]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-10	167-173	sosyal	_	*[6]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-11	174-183	işlevleri	_	*[6]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-12	184-196	azaltmasının	_	*[6]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-12.1	184-189	azalt	_	_	_	*	*	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-12.2	189-191	ma	_	_	_	_	_	_	_	_	coordination particle	3-13[2]	partOfEvent	3-12.1	isAnotherFocus	3-13	NegLexMarker	partOfScope	3-8[6]	*	
+3-13	197-201	yanı	*[2]	*[6]	_	_	_	_	*	*	_	_	_	_	_	_	_	_	_	_	
+3-14	202-206	sıra	*[2]	*[6]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-15	206-207	,	_	*[6]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-16	208-216	ekonomik	_	*[6]|*[7]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-17	217-223	açıdan	_	*[6]|*[7]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-18	224-226	da	*	*[6]|*[7]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-19	227-236	maliyetli	_	*[6]|*[7]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-19.1	227-234	maliyet	_	_	_	_	_	_	*	*	_	_	_	_	_	_	_	_	_	_	
+3-20	237-251	olabilmektedir	_	*[6]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-20.1	237-243	olabil	_	*[7]	_	*	*	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-20.2	245-251	ktedir	_	*	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+3-20.3	243-245	me	_	_	_	_	_	_	_	_	coordination particle	3-18	partOfEvent	3-20.1	isAnotherFocus	3-19.1	NegMorMarker	partOfScope;partOfScope	3-16[7];3-20.2	*	
+3-21	251-252	.	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+
+#Text=Diyabetik ayak ülserlerine karşı multisidipliner bir yaklaşım izlendiğinde, ekonomik yükü azaltacak ve yaşam kalitesini arttıracağı tahmin edilmektedir.
+4-1	253-262	Diyabetik	_	*[8]	_	_	_	_[13]	*	*[13]	_	_	_	_	_	_	_	_	_	_	
+4-2	263-267	ayak	_	*[8]	_	_	_	_[13]	*	*[13]	_	_	_	_	_	_	_	_	_	_	
+4-3	268-279	ülserlerine	_	*[8]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-3.1	268-277	ülserleri	_	_	_	_	_	_[13]	*	*[13]	_	_	_	_	_	_	_	_	_	_	
+4-4	280-285	karşı	_	*[8]	_	*	*	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-5	286-301	multisidipliner	_	*[8]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-5.1	293-301	dipliner	_	_	_	*	*	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-6	302-305	bir	_	*[8]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-7	306-314	yaklaşım	_	*[8]	_	_	_	_	_	_	coordination particle	4-8	partOfEvent;partOfEvent	4-5.1;4-4	isAnotherFocus;isAnotherFocus	4-14[15];4-1[13]	NegLexMarker	partOfScope	4-1[8]	*	
+4-8	315-327	izlendiğinde	*	*[8]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-9	327-328	,	_	*[8]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-10	329-337	ekonomik	_	*[8]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-10.1	331-337	onomik	_	*[9]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-11	338-342	yükü	_	*[8]|*[9]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-12	343-352	azaltacak	_	*[8]|*[9]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-13	353-355	ve	_	*[8]|*[9]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-14	356-361	yaşam	_	*[8]|*[9]	_	_	_	_[14]|_[15]	*|*	*[14]|*[15]	_	_	_	_	_	_	_	_	_	_	
+4-15	362-372	kalitesini	_	*[8]|*[9]	_	_	_	_[14]	*	*[14]	_	_	_	_	_	_	_	_	_	_	
+4-16	373-384	arttıracağı	_	*[8]|*[9]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-16.1	373-379	arttır	_	_	_	_	_	_[14]	*	*[14]	_	_	_	_	_	_	_	_	_	_	
+4-17	385-391	tahmin	_	*[8]|*[9]	_	*	*	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-18	392-404	edilmektedir	_	*[8]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-18.1	392-396	edil	_	*[9]	_	*	*	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-18.2	398-404	ktedir	_	*	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+4-18.3	396-398	me	_	_	_	_	_	_	_	_	_	*	partOfEvent;partOfEvent	4-18.1;4-17	isAnotherFocus	4-14[14]	NegMorMarker	partOfScope;partOfScope	4-18.2;4-10.1[9]	*	
+4-19	404-405	.	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+
+#Text=Multidisipliner yaklaşımın ilk adımı, diyabetin sistemik yönünü kontrol etmektir.
+5-1	406-421	Multidisipliner	_	*[10]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-2	422-432	yaklaşımın	_	*[10]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-3	433-436	ilk	_	*[10]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-4	437-442	adımı	_	*[10]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-5	442-443	,	_	*[10]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-6	444-453	diyabetin	*	*[10]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-7	454-462	sistemik	_	*[10]	_	_	_	_[16]	*	*[16]	_	_	_	_	_	_	_	_	_	_	
+5-8	463-469	yönünü	_	*[10]	_	_	_	_[16]	*	*[16]	_	_	_	_	_	_	_	_	_	_	
+5-9	470-477	kontrol	_	_	_[11]	*	*[11]	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-9.1	470-476	kontro	_	*[10]	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-10	478-486	etmektir	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-10.1	483-486	tir	_	*	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-10.2	478-480	et	_	_	_[11]	*	*[11]	_	_	_	_	_	_	_	_	_	_	_	_	_	
+5-10.3	480-483	mek	_	_	_	_	_	_	_	_	coordination particle	5-6	partOfEvent	5-9[11]	isAnotherFocus	5-7[16]	NegMorMarker	partOfScope;partOfScope	5-1[10];5-10.1	*	
+5-11	486-487	.	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+
+#Text=Diyabetik ayak ülserleri, yaranın büyüklüğü ve derinliğinin sürekli takibi, nitelikli yara bakımı, ödem ve enfeksiyon kontrolü, yara gelişimine uygun malzeme kullanımı, uygun debridman yöntemi, negatif basınçlı yara tedavileri ve hiperbarik oksijen tedavisi ile sonuç alınamayan diyabetik ayak ülserlerinde flep-greft rekonstruksiyon prosedürünün uygulanmasını gerekli kılar.
+6-1	488-497	Diyabetik	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-2	498-502	ayak	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-3	503-512	ülserleri	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-4	512-513	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-5	514-521	yaranın	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-6	522-531	büyüklüğü	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-7	532-534	ve	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-8	535-547	derinliğinin	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-9	548-555	sürekli	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-10	556-562	takibi	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-11	562-563	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-12	564-573	nitelikli	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-13	574-578	yara	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-14	579-585	bakımı	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-15	585-586	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-16	587-591	ödem	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-17	592-594	ve	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-18	595-605	enfeksiyon	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-19	606-614	kontrolü	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-20	614-615	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-21	616-620	yara	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-22	621-631	gelişimine	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-23	632-637	uygun	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-24	638-645	malzeme	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-25	646-655	kullanımı	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-26	655-656	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-27	657-662	uygun	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-28	663-672	debridman	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-29	673-680	yöntemi	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-30	680-681	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-31	682-689	negatif	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-32	690-698	basınçlı	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-33	699-703	yara	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-34	704-714	tedavileri	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-35	715-717	ve	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-36	718-728	hiperbarik	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-37	729-736	oksijen	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-38	737-745	tedavisi	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-39	746-749	ile	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-40	750-755	sonuç	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-41	756-766	alınamayan	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-42	767-776	diyabetik	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-43	777-781	ayak	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-44	782-794	ülserlerinde	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-45	795-805	flep-greft	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-46	806-821	rekonstruksiyon	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-47	822-834	prosedürünün	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-48	835-848	uygulanmasını	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-49	849-856	gerekli	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-50	857-862	kılar	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+6-51	862-863	.	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+
+#Text=Gordon'un fonksiyonel sağlık örüntüleri, veri toplama konusunda sistematik ve standart bir yaklaşım oluşturmak ve hemşirenin sağlık ve insan yönünden 11 fonksiyonel alanda hastaya bütüncül olarak bakım vermesi konusunda olanak sağlamaktadır.
+7-1	864-873	Gordon'un	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-2	874-885	fonksiyonel	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-3	886-892	sağlık	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-4	893-903	örüntüleri	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-5	903-904	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-6	905-909	veri	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-7	910-917	toplama	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-8	918-927	konusunda	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-9	928-938	sistematik	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-10	939-941	ve	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-11	942-950	standart	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-12	951-954	bir	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-13	955-963	yaklaşım	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-14	964-974	oluşturmak	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-15	975-977	ve	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-16	978-988	hemşirenin	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-17	989-995	sağlık	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-18	996-998	ve	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-19	999-1004	insan	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-20	1005-1013	yönünden	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-21	1014-1016	11	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-22	1017-1028	fonksiyonel	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-23	1029-1035	alanda	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-24	1036-1043	hastaya	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-25	1044-1052	bütüncül	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-26	1053-1059	olarak	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-27	1060-1065	bakım	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-28	1066-1073	vermesi	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-29	1074-1083	konusunda	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-30	1084-1090	olanak	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-31	1091-1104	sağlamaktadır	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+7-32	1104-1105	.	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+
+#Text=Olgu, kapsamlı ve standardize edilmiş veri toplama yöntemleri ve hemşirelerin hasta bakımında daha kapsamlı bir değerlendirme yapması, hemşirelik sürecini uygulayabilmeleri için kullanılmak üzere tanımlanmış bir süreç olup, 15 yıldır diyabeti olan ve diyabetik ayak nedeniyle flep-greft onarımı yapılan hastaya hemşirelik bakımı ele alınırken Gordon'un fonksiyonel sağlık örüntüleri hemşirelik bakım modeli, NANDA hemşirelik tanıları ile değerlendirilmiştir.
+8-1	1106-1110	Olgu	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-2	1110-1111	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-3	1112-1120	kapsamlı	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-4	1121-1123	ve	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-5	1124-1135	standardize	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-6	1136-1143	edilmiş	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-7	1144-1148	veri	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-8	1149-1156	toplama	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-9	1157-1167	yöntemleri	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-10	1168-1170	ve	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-11	1171-1183	hemşirelerin	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-12	1184-1189	hasta	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-13	1190-1199	bakımında	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-14	1200-1204	daha	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-15	1205-1213	kapsamlı	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-16	1214-1217	bir	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-17	1218-1231	değerlendirme	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-18	1232-1239	yapması	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-19	1239-1240	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-20	1241-1251	hemşirelik	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-21	1252-1260	sürecini	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-22	1261-1278	uygulayabilmeleri	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-23	1279-1283	için	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-24	1284-1295	kullanılmak	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-25	1296-1301	üzere	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-26	1302-1313	tanımlanmış	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-27	1314-1317	bir	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-28	1318-1323	süreç	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-29	1324-1328	olup	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-30	1328-1329	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-31	1330-1332	15	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-32	1333-1339	yıldır	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-33	1340-1348	diyabeti	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-34	1349-1353	olan	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-35	1354-1356	ve	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-36	1357-1366	diyabetik	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-37	1367-1371	ayak	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-38	1372-1381	nedeniyle	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-39	1382-1392	flep-greft	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-40	1393-1400	onarımı	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-41	1401-1408	yapılan	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-42	1409-1416	hastaya	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-43	1417-1427	hemşirelik	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-44	1428-1434	bakımı	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-45	1435-1438	ele	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-46	1439-1448	alınırken	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-47	1449-1458	Gordon'un	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-48	1459-1470	fonksiyonel	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-49	1471-1477	sağlık	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-50	1478-1488	örüntüleri	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-51	1489-1499	hemşirelik	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-52	1500-1505	bakım	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-53	1506-1512	modeli	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-54	1512-1513	,	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-55	1514-1519	NANDA	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-56	1520-1530	hemşirelik	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-57	1531-1539	tanıları	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-58	1540-1543	ile	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-59	1544-1563	değerlendirilmiştir	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
+8-60	1563-1564	.	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	_	
