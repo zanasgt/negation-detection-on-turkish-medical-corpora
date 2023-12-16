@@ -12,13 +12,15 @@ import pandas as pd
 class AnnotationData:
   def __init__(self):
     self.documents = []
-    self.labeled_dataset = pd.DataFrame(columns=['sentence_id', 'token_id', 'cue', 'scope', 'focus', 'event'])
-    self.indexed_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_text', 'cue', 'scope', 'focus', 'event'])
-    self.detail_dataset = pd.DataFrame(columns=['sentence_id', 'token_id', 'token', 
-                                           'cue', 'cue_type', 'cue_word', 'cue_index', 'cue_word_index',
-                                           'scope', 'scope_index', 'scope_word', 'scope_word_index',
-                                           'focus', 'focus_index', 'focus_word', 'focus_word_index',
-                                           'event', 'event_index', 'event_word', 'event_word_index'])
+    self.dictionery_dataset = []
+    self.sentence_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_text', 'cue', 'scope', 'focus', 'event'])
+    self.labeled_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_set_id', 
+                                           'token_id', 'token', 'token_index', 
+                                           'cue', 'cue_type', 'cue_index', 'cue_label',
+                                           'scope', 'scope_index', 'scope_label',
+                                           'focus', 'focus_index', 'focus_label',
+                                           'event', 'event_index', 'event_label',
+                                           'cp', 'cp_index', 'cp_label'])
     # this part will be done with data visualization on DataFrame
     # self.negation_count = {
     #     "morphological": 0,
@@ -33,19 +35,30 @@ class AnnotationData:
     self.documents.append(document)
 
   def process_all_documents(self, resetIndexes = True):
-    dataset = []
+    doc_number = 0
     for document in self.documents:
-      dataset.append(document.process(resetIndexes))
-    return dataset
+      self.sentence_dataset = pd.concat([self.sentence_dataset, document.sentence_dataset], axis=0, join='outer')
+      self.labeled_dataset = pd.concat([self.labeled_dataset, document.labeled_dataset], axis=0, join='outer')
+      self.sentence_dataset.insert(0, 'doc_number', doc_number)
+      self.labeled_dataset.insert(0, 'doc_number', doc_number)
+      doc_number += 1
+      print("Document negations added to dataset..")
+      # self.labeled_dataset = labeled_dataset
+      # print("Labeled results added to dataset..")
+      # self.indexed_dataset = indexed_dataset
+      # print("İndexed results added to dataset..")
+      # self.detail_dataset = detailed_dataset
+      # print("Detailed results added to dataset..")
   
 class Document():
   def __init__(self, xmi_path, dataset: AnnotationData):
     self.xmi_path = xmi_path
     # self.typesystem_path = typesystem_path
     self.cas = None
-    self.negation_count = {}
-    # self.dataset = dataset
-
+    self.load()
+    self.sentence_dataset = pd.DataFrame()
+    self.labeled_dataset = pd.DataFrame()
+    self.process()
   def load(self):
     with open(xmi_path, 'rb') as f:
       self.cas = load_cas_from_zip_file(f)
@@ -59,10 +72,13 @@ class Document():
     if feature_list:
       result = []
       for item in feature_list:
-        begin = item.target.begin
-        end = item.target.end
-        tar_text = item.target.get_covered_text()
-        result.append((begin, end, tar_text))
+        item = {'begin': item.target.begin, 
+                'end': item.target.end,
+                'text': item.target.get_covered_text()}
+        # begin = item.target.begin
+        # end = item.target.end
+        # tar_text = item.target.get_covered_text()
+        result.append(item)
         # incase if needed as we will recor those feature by neme later
         #tar_type = item.target.type.name.split('.')[-1]
         #feature = {
@@ -77,7 +93,10 @@ class Document():
   def extract_elements_of_marker(self):
     neg_in_doc = []
     for neg_marker in self.cas.select('webanno.custom.NegationMarker'):
-      neg_type = neg_marker.markerType
+      neg_cue = {"type" : neg_marker.markerType,
+                 "begin" : neg_marker.begin,
+                 "end" : neg_marker.end,
+                 "text" : neg_marker.get_covered_text()}
       neg_coordination_particle_ = neg_marker.coordinationparticle.elements
       neg_coordination_particle = self.load_negation_features(neg_coordination_particle_)
       neg_event_ = neg_marker.event.elements
@@ -99,14 +118,11 @@ class Document():
             if neg_scope is not None else 'No scope')
       '''
       neg = {
-        "neg_marker": neg_marker.get_covered_text(),
-        "neg_marker_begin": neg_marker.begin,
-        "neg_marker_end": neg_marker.end,
-        "neg_marker_type": neg_marker.markerType,
-        "neg_scope": neg_scope,
-        "neg_focus": neg_focus,
-        "neg_event": neg_event,
-        "neg_coor_part": neg_coordination_particle
+        "cue": neg_cue,
+        "scope": neg_scope,
+        "focus": neg_focus,
+        "event": neg_event,
+        "coor_part": neg_coordination_particle
       }
       neg_in_doc.append(neg)
     #print(neg_in_doc[2])
@@ -128,84 +144,248 @@ class Document():
   #   elif neg_marker["neg_marker"] == 'sız' or neg_marker["neg_marker"] == 'siz' or neg_marker["neg_marker"] == 'suz' or neg_marker["neg_marker"] == 'süz':
   #     self.dataset.negation_count["_sız"] += 1
   
-  def find_tokens(self,sentence, reset_indexes = True):
-    token_id = 0
-    result = []
-    token_dict ={}
-    for token in self.cas.select('de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token'):
-      if token.begin >= sentence.begin and token.end <= sentence.end:
-        token_dict = {
-          "token_id": token_id,
-          "token": token.get_covered_text(),
-          "token_begin": token.begin - sentence.begin,
-          "token_end": token.end - sentence.begin,
-          "neg_cue_type": '',
-          "is_scope": False,
-          "is_focus": False,
-          "is_event": False
-        }
+  # def find_token_features(self,sentence, reset_indexes = True):
+  #   token_id = 0
+  #   result = []
+  #   token_dict ={}
+  #   for token in self.cas.select('de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token'):
+  #     if token.begin >= sentence.begin and token.end <= sentence.end:
+  #       token_dict = {
+  #         "token_id": token_id,
+  #         "token": token.get_covered_text(),
+  #         "begin": token.begin - sentence.begin,
+  #         "end": token.end - sentence.begin
+  #       }
 
-        #sentence_dict["tokens"].append(token_dict)
-        token_id += 1
-        result.append(token_dict)
-    return result
+  #       #sentence_dict["tokens"].append(token_dict)
+  #       token_id += 1
+  #       result.append(token_dict)
+  #   return result
 
   def process(self, reset_indexes=True):
     if self.cas is None:
-      raise ValueError("Document not loaded. Call load() first.")
+      raise ValueError("Document not loaded.")
     else:
+      def find_token_feature(token_text, token_index, feature_index):
+        index = (0, 0)
+        if token_index[0] < feature_index[0]:
+          if token_index[1] < feature_index[1]:
+            index = (feature_index[0], token_index[1])
+            token_feature_text = token_text[feature_index[0]-token_index[0]:token_index[1]-token_index[0]]
+          else:
+            index = (feature_index[0], feature_index[1])
+            token_feature_text = token_text[feature_index[0]-token_index[0]:feature_index[1]-token_index[0]]
+        else:
+          if token_index[1] > feature_index[1]:
+            index = (token_index[0], feature_index[1])
+            token_feature_text = token_text[token_index[0]-token_index[0]:feature_index[1]-token_index[0]]
+          else:
+            index = (token_index[0], token_index[1])
+            token_feature_text = token_text[0:token_index[1]-token_index[0]]
+        return token_feature_text, index
+      
+      def is_include(token_index, feature_index):
+        return not (feature_index[1] <= token_index[0] or feature_index[0] >= token_index[1])
+      #(token_index[1] > feature_index[0] >= token_index[0]) or (feature_index[0] <= token_index[0] < feature_index[1])
+      
+      def split_features(feature_dict: dict, feature_name):
+        if type(feature_dict[feature_name]) is type(None):
+          return []
+        elif type(feature_dict[feature_name]) is list:
+          return feature_dict[feature_name]
+        else:
+          return [feature_dict[feature_name]]
+      
+      sentence_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_set_id', 'sentence_text', 
+                                               'cue', 'scope', 'focus', 'event', 'coor_part'])
+      
+      labeled_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_set_id', 
+                                             'token_id', 'token', 'token_index', 
+                                             'cue', 'cue_type', 'cue_index', 'cue_label',
+                                             'scope', 'scope_index', 'scope_label',
+                                             'focus', 'focus_index', 'focus_label',
+                                             'event', 'event_index', 'event_label',
+                                             'cp', 'cp_index', 'cp_label'])
+      
+      # extract negation markers and its features
       negations_in_doc = self.extract_elements_of_marker()
+      
       dataset_dict = []
       sentence_id = 0
+      sentence_set_id = 0
+      processed_token_index = 0
       
-      a = self.cas.select('de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence')
-      for sentence in self.cas.select('de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence'):   
-        sentence_dict = {}
-        sentence_neg_markers = [item for item in negations_in_doc 
-                            if sentence.begin <= item["neg_marker_begin"] <= sentence.end]
-        token_id = 0
-        
-            
-          
-        if len(sentence_neg_markers)>1:
-          for neg_marker in sentence_neg_markers:
-            sentence_dict = {}
-            sentence_dict["sentence_id"] = sentence_id
-            sentence_dict["text"] = sentence.get_covered_text()
-            sentence_dict["sentence_begin"] = 0 if reset_indexes else sentence.begin
-            sentence_dict["sentence_end"] = sentence.end - sentence.begin if reset_indexes else sentence.end
-            sentence_dict["items"] = neg_marker
-            sentence_dict["tokens"] = self.find_tokens(sentence)
-            
-            dataset_dict.append(sentence_dict)
-            sentence_id += 1
-            self.count_negation(neg_marker)
-          self.dataset.multi_negation_count = self.dataset.multi_negation_count + 1
-            
-        elif len(sentence_neg_markers) == 1:
-          sentence_dict["sentence_id"] = sentence_id
-          sentence_dict["text"] = sentence.get_covered_text()
-          sentence_dict["sentence_begin"] = 0 if reset_indexes else sentence.begin
-          sentence_dict["sentence_end"] = sentence.end - sentence.begin if reset_indexes else sentence.end
-          sentence_dict["items"] = sentence_neg_markers[0]
-          sentence_dict["tokens"] = self.find_tokens(sentence, reset_indexes)
-          
-          dataset_dict.append(sentence_dict)
-          sentence_id += 1
-          self.count_negation(neg_marker)
-          
+      # Sort tokens based on their 'begin' values it is already sorted in xmi
+      # tokens.sort(key=lambda x: x.begin)
+      
+      tokens = self.cas.select('de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token')
+      for sentence in self.cas.select('de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence'):
+        if sentence.get_covered_text() == "GİRİŞ" or sentence.get_covered_text() =="İÇERİK" or sentence.get_covered_text() =="ÖZET":
+          processed_token_index += 1
+          pass
         else:
-          sentence_dict["sentence_id"] = sentence_id
-          sentence_dict["text"] = sentence.get_covered_text()
-          sentence_dict["sentence_begin"] = 0 if reset_indexes else sentence.begin
-          sentence_dict["sentence_end"] = sentence.end - sentence.begin if reset_indexes else sentence.end
-          sentence_dict["items"] = {}
-          sentence_dict["tokens"] = self.find_tokens(sentence, reset_indexes)
+          sentence_tokens = []
+          for token in tokens:
+            print(token.begin, sentence.begin, sentence.end)
+            if token.begin >= sentence.end or token.end < sentence.begin:
+              processed_token_index =+ 1
+              pass
+            if sentence.begin <= token.begin < sentence.end:
+              sentence_tokens.append(token)
+              processed_token_index += 1
+              print(token.get_covered_text())
+            if token.begin > sentence.end:
+              break
           
-          dataset_dict.append(sentence_dict)
-          sentence_id += 1
-        
-    return dataset_dict
+          tokens = tokens[processed_token_index:]
+          
+          sentence_neg_markers = [item for item in negations_in_doc 
+                              if sentence.begin <= item["cue"]["begin"] <= sentence.end]
+          
+          if len(sentence_neg_markers):
+            for neg_marker in sentence_neg_markers:
+              cues = split_features(neg_marker, "cue") # neg_marker["cue"] if type(neg_marker["cue"]) is list else [neg_marker["cue"]]
+              scopes = split_features(neg_marker, "scope") # neg_marker["scope"] if type(neg_marker["scope"]) is list else [neg_marker["scope"]]
+              focuses = split_features(neg_marker, "focus") # neg_marker["focus"] if type(neg_marker["focus"]) is list else [neg_marker["focus"]]
+              events = split_features(neg_marker, "event") # neg_marker["event"] if type(neg_marker["event"]) is list else [neg_marker["event"]]
+              coor_parts = split_features(neg_marker, "coor_part") #neg_marker["coor_part"] if type(neg_marker["coor_part"]) is dict else [neg_marker["coor_part"]]
+              
+              sentence_dataset_dict = {"sentence_id" : sentence_id, 
+                                       "sentence_set_id" : sentence_set_id,
+                                       "sentence_text" : sentence.get_covered_text(), 
+                                       "cue" : cues,
+                                       "scope" : scopes,
+                                       "focus" : focuses,
+                                       "event" : events,
+                                       "coor_part" : coor_parts}
+              sentence_dataset.loc[len(sentence_dataset)] = sentence_dataset_dict
+              
+              token_id = 0
+              for token in sentence_tokens:
+                print(token.begin, token.end, token.get_covered_text(), token.order, token.parent)
+                token_index = (token.begin, token.end)
+                token_text = token.get_covered_text()
+                token_cue_index = None 
+                token_cue_text = None 
+                token_cue_type = None
+                token_scope_index = None
+                token_scope_text = None
+                token_focus_index = None
+                token_focus_text = None
+                token_event_index = None
+                token_event_text = None
+                token_cp_index = None
+                token_cp_text = None
+                
+                token_scope_texts = []
+                token_focus_texts = []
+                token_event_texts = []
+                token_cp_texts = []
+                token_scope_indexes = []
+                token_focus_indexes = []
+                token_event_indexes = []
+                token_cp_indexes = []
+                for cue in cues:
+                  cue_index = (cue["begin"], cue["end"])
+                  cue_text = cue["text"]
+                  cue_type = cue["type"]
+                  if is_include(token_index, cue_index):
+                    token_cue_text, token_cue_index = find_token_feature(token_text, token_index, cue_index)
+                    token_cue_type = cue["type"]
+                    
+                for scope in scopes:
+                  scope_index = (scope["begin"], scope["end"])
+                  scope_text = scope["text"]
+                  if is_include(token_index, scope_index):
+                    token_scope_text, token_scope_index = find_token_feature(token_text, token_index, scope_index)
+                    token_scope_texts.append(token_scope_text)
+                    token_scope_indexes.append(token_scope_index)
+                                
+                for focus in focuses:
+                  focus_index = (focus["begin"], focus["end"])
+                  focus_text = focus["text"]
+                  if is_include(token_index, focus_index):
+                    token_focus_text, token_focus_index = find_token_feature(token_text, token_index, focus_index)
+                    token_focus_texts.append(token_scope_text)
+                    token_focus_indexes.append(token_scope_index)
+                    
+                for event in events:
+                  event_index = (event["begin"], event["end"])
+                  event_text = event["text"]
+                  if is_include(token_index, event_index):
+                    token_event_text, token_event_index = find_token_feature(token_text, token_index, event_index)
+                    token_event_texts.append(token_scope_text)
+                    token_event_indexes.append(token_scope_index)
+                                      
+                for coor_part in coor_parts:
+                  cp_index = (coor_part["begin"], coor_part["end"])
+                  cp_text = coor_part["text"]
+                  if is_include(token_index, cp_index):
+                    token_cp_text, token_cp_index = find_token_feature(token_text, token_index, cp_index)
+                    token_cp_texts.append(token_scope_text)
+                    token_cp_indexes.append(token_scope_index)
+                    
+                labeled_dataset_dict = {"sentence_id" : sentence_id, "sentence_set_id" : sentence_set_id,
+                                          "token_id" : token_id, "token" : token.get_covered_text(), 
+                                          "token_index" : (token.begin, token.end), 
+                                          "cue" : token_cue_text, "cue_type" : token_cue_type, "cue_index" : token_cue_index,
+                                          "scope" : ('|').join(text for text in token_scope_texts) if len(token_scope_texts) > 0 else token_scope_text, 
+                                          "scope_index" : token_scope_indexes if len(token_scope_indexes) > 0 else token_scope_index,
+                                          "focus" : ('|').join(text for text in token_focus_texts) if len(token_focus_texts) > 0 else token_scope_text, 
+                                          "focus_index" : token_focus_indexes if len(token_focus_indexes) > 0 else token_scope_index,
+                                          "event" : ('|').join(text for text in token_event_texts) if len(token_event_texts) > 0 else token_event_text, 
+                                          "event_index" : token_event_indexes if len(token_event_indexes) > 0 else token_scope_index,
+                                          "cp" : ('|').join(text for text in token_cp_texts) if len(token_cp_texts) > 0 else token_cp_text, "cp_index" : token_cp_indexes if len(token_cp_indexes) > 0 else token_cp_index}
+                  
+                labeled_dataset.loc[len(labeled_dataset)] = labeled_dataset_dict
+                token_id = token_id + 1
+              
+              sentence_id = sentence_id + 1
+            sentence_tokens = []
+            sentence_set_id = sentence_set_id + 1
+          else:
+            sentence_dataset_dict = {"sentence_id" : sentence_id,
+                                     "sentence_set_id" : sentence_set_id,
+                                     "sentence_text" : sentence.get_covered_text(), 
+                                     "cue" : None,
+                                     "scope" : None,
+                                     "focus" : None,
+                                     "event" : None,
+                                     "coor_part" : None}
+            sentence_dataset.loc[len(sentence_dataset)] = sentence_dataset_dict
+            
+            token_id = 0
+            for token in sentence_tokens:
+              print(token.begin, token.end, token.get_covered_text(), token.order, token.parent)
+              token_index = (token.begin, token.end)
+              token_text = token.get_covered_text()
+              token_cue_index = None
+              token_cue_text = None
+              token_cue_type = None
+              token_scope_index = None
+              token_scope_text = None
+              token_focus_index = None
+              token_focus_text = None
+              token_event_index = None
+              token_event_text = None
+              token_cp_index = None
+              token_cp_text = None
+              labeled_dataset_dict = {"sentence_id" : sentence_id, "sentence_set_id" : sentence_set_id,
+                                        "token_id" : token_id, "token" : token.get_covered_text(), 
+                                        "token_index" : (token.begin, token.end), 
+                                        "cue" : token_cue_text, "cue_type" : token_cue_type, "cue_text" : token_cue_text,
+                                        "scope" : token_scope_text, "scope_index" : token_scope_index,
+                                        "focus" : token_focus_text, "focus_index" : token_focus_index,
+                                        "event" : token_event_text, "event_index" : token_event_index,
+                                        "cp" : token_cp_text, "cp_index" : token_cp_index}
+                
+              labeled_dataset.loc[len(labeled_dataset)] = labeled_dataset_dict
+              token_id = token_id + 1
+            sentence_id = sentence_id + 1
+            sentence_set_id = sentence_set_id + 1
+          sentence_tokens = []
+    self.sentence_dataset = sentence_dataset
+    self.labeled_dataset = labeled_dataset
 
       
 
@@ -214,6 +394,7 @@ if __name__ == "__main__":
 
     # Replace these paths with your actual file paths
     xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\756488.zip'
+    # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\tartışma_1 (1).zip'
     typesystem_paths = [r"C:\Users\cardcentric\Downloads\796005\TypeSystem.xml"]
 
     # for xmi_path, typesystem_path in zip(xmi_paths, typesystem_paths):
@@ -221,7 +402,8 @@ if __name__ == "__main__":
     #     document.load()
     #     annotation_data.add_document(document)
     document = Document(xmi_path, annotation_data)
-    document.load()
     annotation_data.add_document(document)
-    dataset = annotation_data.process_all_documents(resetIndexes=False)
+    annotation_data.process_all_documents(resetIndexes=False)
+    a = annotation_data.labeled_dataset
+    b = annotation_data.sentence_dataset
     #print(annotation_data.negation_count, annotation_data.multi_negation_count)
