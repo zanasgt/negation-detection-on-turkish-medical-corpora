@@ -8,10 +8,12 @@ Created on Thu Nov  9 22:22:38 2023
 from cassis import *
 from dkpro_cassis_tools import load_cas_from_zip_file
 import pandas as pd
+import os
 
 class AnnotationData:
   def __init__(self):
     self.documents = []
+    self.document_number = 1
     self.dictionery_dataset = []
     self.sentence_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_text', 'cue', 'scope', 'focus', 'event'])
     self.labeled_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_set_id', 
@@ -32,13 +34,20 @@ class AnnotationData:
     # self.multi_negation_count = 0
 
   def add_document(self, document):
+    document.sentence_dataset['document_number'] = self.document_number
+    document.labeled_dataset['document_number'] = self.document_number
+    self.sentence_dataset = pd.concat([self.sentence_dataset, document.sentence_dataset], axis=0, join='outer')
+    self.labeled_dataset = pd.concat([self.labeled_dataset, document.labeled_dataset], axis=0, join='outer')
+    
     self.documents.append(document)
-
+    self.document_number += 1
+    print("Document negations added to dataset..")
+    
   def process_all_documents(self, resetIndexes = True):
     doc_number = 0
     for document in self.documents:
-      self.sentence_dataset = pd.concat([self.sentence_dataset, document.sentence_dataset], axis=0, join='outer')
-      self.labeled_dataset = pd.concat([self.labeled_dataset, document.labeled_dataset], axis=0, join='outer')
+      # self.sentence_dataset = pd.concat([self.sentence_dataset, document.sentence_dataset], axis=0, join='outer')
+      # self.labeled_dataset = pd.concat([self.labeled_dataset, document.labeled_dataset], axis=0, join='outer')
       self.sentence_dataset.insert(0, 'doc_number', doc_number)
       self.labeled_dataset.insert(0, 'doc_number', doc_number)
       doc_number += 1
@@ -260,6 +269,10 @@ class Document():
                                        "coor_part" : coor_parts}
               sentence_dataset.loc[len(sentence_dataset)] = sentence_dataset_dict
               
+              is_first_token_scope = True
+              is_first_token_focus = True
+              is_first_token_event = True
+              is_first_token_cp = True
               token_id = 0
               for token in sentence_tokens:
                 print(token.begin, token.end, token.get_covered_text(), token.order, token.parent)
@@ -276,6 +289,11 @@ class Document():
                 token_event_text = None
                 token_cp_index = None
                 token_cp_text = None
+                token_cue_label = 'O'
+                token_scope_label = 'O'
+                token_focus_label = 'O'
+                token_event_label = 'O'
+                token_cp_label = 'O'
                 
                 token_scope_texts = []
                 token_focus_texts = []
@@ -285,6 +303,8 @@ class Document():
                 token_focus_indexes = []
                 token_event_indexes = []
                 token_cp_indexes = []
+                
+                
                 for cue in cues:
                   cue_index = (cue["begin"], cue["end"])
                   cue_text = cue["text"]
@@ -292,6 +312,8 @@ class Document():
                   if is_include(token_index, cue_index):
                     token_cue_text, token_cue_index = find_token_feature(token_text, token_index, cue_index)
                     token_cue_type = cue["type"]
+                    token_cue_label = f'B_{token_cue_type}'
+                    
                     
                 for scope in scopes:
                   scope_index = (scope["begin"], scope["end"])
@@ -300,42 +322,68 @@ class Document():
                     token_scope_text, token_scope_index = find_token_feature(token_text, token_index, scope_index)
                     token_scope_texts.append(token_scope_text)
                     token_scope_indexes.append(token_scope_index)
+                    if is_first_token_scope:
+                      token_scope_label = 'B_scope'
+                      is_first_token_scope = False
+                    else:
+                      token_scope_label = 'I_scope'
                                 
                 for focus in focuses:
                   focus_index = (focus["begin"], focus["end"])
                   focus_text = focus["text"]
                   if is_include(token_index, focus_index):
                     token_focus_text, token_focus_index = find_token_feature(token_text, token_index, focus_index)
-                    token_focus_texts.append(token_scope_text)
-                    token_focus_indexes.append(token_scope_index)
+                    token_focus_texts.append(token_focus_text)
+                    token_focus_indexes.append(token_focus_index)
+                    if is_first_token_focus:
+                      token_focus_label = 'B_focus'
+                      is_first_token_focus = False
+                    else:
+                      token_focus_label = 'I_focus'
                     
                 for event in events:
                   event_index = (event["begin"], event["end"])
                   event_text = event["text"]
                   if is_include(token_index, event_index):
                     token_event_text, token_event_index = find_token_feature(token_text, token_index, event_index)
-                    token_event_texts.append(token_scope_text)
-                    token_event_indexes.append(token_scope_index)
+                    token_event_texts.append(token_event_text)
+                    token_event_indexes.append(token_event_index)
+                    if is_first_token_event:
+                      token_event_label = 'B_event'
+                      is_first_token_event = False
+                    else:
+                      token_event_label = 'I_event'
                                       
                 for coor_part in coor_parts:
                   cp_index = (coor_part["begin"], coor_part["end"])
                   cp_text = coor_part["text"]
                   if is_include(token_index, cp_index):
                     token_cp_text, token_cp_index = find_token_feature(token_text, token_index, cp_index)
-                    token_cp_texts.append(token_scope_text)
-                    token_cp_indexes.append(token_scope_index)
+                    token_cp_texts.append(token_cp_text)
+                    token_cp_indexes.append(token_cp_index)
+                    if is_first_token_cp:
+                      token_cp_label = 'B_cp'
+                      is_first_token_cp = False
+                    else:
+                      token_cp_label = 'I_cp'
                     
                 labeled_dataset_dict = {"sentence_id" : sentence_id, "sentence_set_id" : sentence_set_id,
                                           "token_id" : token_id, "token" : token.get_covered_text(), 
                                           "token_index" : (token.begin, token.end), 
                                           "cue" : token_cue_text, "cue_type" : token_cue_type, "cue_index" : token_cue_index,
+                                          "cue_label" : token_cue_label,
                                           "scope" : ('|').join(text for text in token_scope_texts) if len(token_scope_texts) > 0 else token_scope_text, 
                                           "scope_index" : token_scope_indexes if len(token_scope_indexes) > 0 else token_scope_index,
-                                          "focus" : ('|').join(text for text in token_focus_texts) if len(token_focus_texts) > 0 else token_scope_text, 
-                                          "focus_index" : token_focus_indexes if len(token_focus_indexes) > 0 else token_scope_index,
+                                          "scope_label" : token_scope_label,
+                                          "focus" : ('|').join(text for text in token_focus_texts) if len(token_focus_texts) > 0 else token_focus_text, 
+                                          "focus_index" : token_focus_indexes if len(token_focus_indexes) > 0 else token_focus_index,
+                                          "focus_label" : token_focus_label,
                                           "event" : ('|').join(text for text in token_event_texts) if len(token_event_texts) > 0 else token_event_text, 
-                                          "event_index" : token_event_indexes if len(token_event_indexes) > 0 else token_scope_index,
-                                          "cp" : ('|').join(text for text in token_cp_texts) if len(token_cp_texts) > 0 else token_cp_text, "cp_index" : token_cp_indexes if len(token_cp_indexes) > 0 else token_cp_index}
+                                          "event_index" : token_event_indexes if len(token_event_indexes) > 0 else token_event_index,
+                                          "event_label" : token_event_label,
+                                          "cp" : ('|').join(text for text in token_cp_texts) if len(token_cp_texts) > 0 else token_cp_text, 
+                                          "cp_index" : token_cp_indexes if len(token_cp_indexes) > 0 else token_cp_index,
+                                          "cp_label" : token_cp_label}
                   
                 labeled_dataset.loc[len(labeled_dataset)] = labeled_dataset_dict
                 token_id = token_id + 1
@@ -370,14 +418,28 @@ class Document():
               token_event_text = None
               token_cp_index = None
               token_cp_text = None
+              token_cue_label = 'O'
+              token_scope_label = 'O'
+              token_focus_label = 'O'
+              token_event_label = 'O'
+              token_cp_label = 'O'
               labeled_dataset_dict = {"sentence_id" : sentence_id, "sentence_set_id" : sentence_set_id,
                                         "token_id" : token_id, "token" : token.get_covered_text(), 
                                         "token_index" : (token.begin, token.end), 
-                                        "cue" : token_cue_text, "cue_type" : token_cue_type, "cue_text" : token_cue_text,
-                                        "scope" : token_scope_text, "scope_index" : token_scope_index,
-                                        "focus" : token_focus_text, "focus_index" : token_focus_index,
-                                        "event" : token_event_text, "event_index" : token_event_index,
-                                        "cp" : token_cp_text, "cp_index" : token_cp_index}
+                                        "cue" : token_cue_text, "cue_type" : token_cue_type, "cue_index" : token_cue_index,
+                                        "cue_label" : token_cue_label,
+                                        "scope" : token_scope_text, 
+                                        "scope_index" : token_scope_index,
+                                        "scope_label" : token_scope_label,
+                                        "focus" : token_focus_text, 
+                                        "focus_index" : token_focus_index,
+                                        "focus_label" : token_focus_label,
+                                        "event" : token_event_text, 
+                                        "event_index" : token_event_index,
+                                        "event_label" : token_event_label,
+                                        "cp" : token_cp_text, 
+                                        "cp_index" :  token_cp_index,
+                                        "cp_label" : token_cp_label}
                 
               labeled_dataset.loc[len(labeled_dataset)] = labeled_dataset_dict
               token_id = token_id + 1
@@ -390,20 +452,31 @@ class Document():
       
 
 if __name__ == "__main__":
-    annotation_data = AnnotationData()
+  root_dir = os.path.join(os.getcwd(), 'annotated-dataset')
+  annotation_data = AnnotationData()
+  
+  for (dirpath, dirnames, filenames) in os.walk(root_dir):
+    for filename in filenames:
+      xmi_path = os.path.join(dirpath, filename)
+      document = Document(xmi_path, annotation_data)
+      annotation_data.add_document(document)
+      
+  
+  # annotation_data.process_all_documents(resetIndexes=False)    
+  # # Replace these paths with your actual file paths
+  # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\756488.zip'
+  # # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\tartışma_1.zip'
+  # # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\775699.zip'
+  # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\tartışma_2.zip'
+  # typesystem_paths = [r"C:\Users\cardcentric\Downloads\796005\TypeSystem.xml"]
 
-    # Replace these paths with your actual file paths
-    xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\756488.zip'
-    # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\tartışma_1 (1).zip'
-    typesystem_paths = [r"C:\Users\cardcentric\Downloads\796005\TypeSystem.xml"]
-
-    # for xmi_path, typesystem_path in zip(xmi_paths, typesystem_paths):
-    #     document = Document(xmi_path, annotation_data)
-    #     document.load()
-    #     annotation_data.add_document(document)
-    document = Document(xmi_path, annotation_data)
-    annotation_data.add_document(document)
-    annotation_data.process_all_documents(resetIndexes=False)
-    a = annotation_data.labeled_dataset
-    b = annotation_data.sentence_dataset
-    #print(annotation_data.negation_count, annotation_data.multi_negation_count)
+  # # for xmi_path, typesystem_path in zip(xmi_paths, typesystem_paths):
+  # #     document = Document(xmi_path, annotation_data)
+  # #     document.load()
+  # #     annotation_data.add_document(document)
+  # document = Document(xmi_path, annotation_data)
+  # annotation_data.add_document(document)
+  # annotation_data.process_all_documents(resetIndexes=False)
+  # a = annotation_data.labeled_dataset
+  # b = annotation_data.sentence_dataset
+  # #print(annotation_data.negation_count, annotation_data.multi_negation_count)
