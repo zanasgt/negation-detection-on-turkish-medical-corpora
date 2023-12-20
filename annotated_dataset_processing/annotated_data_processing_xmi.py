@@ -15,14 +15,16 @@ class AnnotationData:
     self.documents = []
     self.document_number = 1
     self.dictionery_dataset = []
-    self.sentence_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_text', 'cue', 'scope', 'focus', 'event'])
-    self.labeled_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_set_id', 
-                                           'token_id', 'token', 'token_index', 
-                                           'cue', 'cue_type', 'cue_index', 'cue_label',
-                                           'scope', 'scope_index', 'scope_label',
-                                           'focus', 'focus_index', 'focus_label',
-                                           'event', 'event_index', 'event_label',
-                                           'cp', 'cp_index', 'cp_label'])
+    columns=['document_number', 'sentence_id', 'sentence_text', 'cue', 'scope', 'focus', 'event']
+    self.sentence_dataset = pd.DataFrame(columns=columns)
+    columns=['document_number', 'sentence_id', 'sentence_set_id', 
+             'token_id', 'token', 'token_index', 
+             'cue', 'cue_type', 'cue_index', 'cue_label',
+             'scope', 'scope_index', 'scope_label',
+             'focus', 'focus_index', 'focus_label',
+             'event', 'event_index', 'event_label',
+             'cp', 'cp_index', 'cp_label']
+    self.labeled_dataset = pd.DataFrame(columns=columns)
     # this part will be done with data visualization on DataFrame
     # self.negation_count = {
     #     "morphological": 0,
@@ -43,21 +45,22 @@ class AnnotationData:
     self.document_number += 1
     print("Document negations added to dataset..")
     
-  def process_all_documents(self, resetIndexes = True):
-    doc_number = 0
-    for document in self.documents:
-      # self.sentence_dataset = pd.concat([self.sentence_dataset, document.sentence_dataset], axis=0, join='outer')
-      # self.labeled_dataset = pd.concat([self.labeled_dataset, document.labeled_dataset], axis=0, join='outer')
-      self.sentence_dataset.insert(0, 'doc_number', doc_number)
-      self.labeled_dataset.insert(0, 'doc_number', doc_number)
-      doc_number += 1
-      print("Document negations added to dataset..")
-      # self.labeled_dataset = labeled_dataset
-      # print("Labeled results added to dataset..")
-      # self.indexed_dataset = indexed_dataset
-      # print("İndexed results added to dataset..")
-      # self.detail_dataset = detailed_dataset
-      # print("Detailed results added to dataset..")
+  # this function remoed and merged with add document event
+  # def process_all_documents(self, resetIndexes = True):
+  #   doc_number = 0
+  #   for document in self.documents:
+  #     # self.sentence_dataset = pd.concat([self.sentence_dataset, document.sentence_dataset], axis=0, join='outer')
+  #     # self.labeled_dataset = pd.concat([self.labeled_dataset, document.labeled_dataset], axis=0, join='outer')
+  #     self.sentence_dataset.insert(0, 'doc_number', doc_number)
+  #     self.labeled_dataset.insert(0, 'doc_number', doc_number)
+  #     doc_number += 1
+  #     print("Document negations added to dataset..")
+  #     # self.labeled_dataset = labeled_dataset
+  #     # print("Labeled results added to dataset..")
+  #     # self.indexed_dataset = indexed_dataset
+  #     # print("İndexed results added to dataset..")
+  #     # self.detail_dataset = detailed_dataset
+  #     # print("Detailed results added to dataset..")
   
 class Document():
   def __init__(self, xmi_path, dataset: AnnotationData):
@@ -205,10 +208,10 @@ class Document():
         else:
           return [feature_dict[feature_name]]
       
-      sentence_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_set_id', 'sentence_text', 
+      sentence_dataset = pd.DataFrame(columns=['document_number', 'sentence_id', 'sentence_set_id', 'sentence_text', 
                                                'cue', 'scope', 'focus', 'event', 'coor_part'])
       
-      labeled_dataset = pd.DataFrame(columns=['sentence_id', 'sentence_set_id', 
+      labeled_dataset = pd.DataFrame(columns=['document_number', 'sentence_id', 'sentence_set_id', 
                                              'token_id', 'token', 'token_index', 
                                              'cue', 'cue_type', 'cue_index', 'cue_label',
                                              'scope', 'scope_index', 'scope_label',
