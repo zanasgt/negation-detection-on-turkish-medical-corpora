@@ -452,7 +452,7 @@ class Document():
       
 
 if __name__ == "__main__":
-  root_dir = os.path.join(os.getcwd(), 'annotated-dataset')
+  root_dir = os.path.join(os.getcwd(), 'annotated-dataset-xmi')
   annotation_data = AnnotationData()
   
   for (dirpath, dirnames, filenames) in os.walk(root_dir):
@@ -460,23 +460,3 @@ if __name__ == "__main__":
       xmi_path = os.path.join(dirpath, filename)
       document = Document(xmi_path, annotation_data)
       annotation_data.add_document(document)
-      
-  
-  # annotation_data.process_all_documents(resetIndexes=False)    
-  # # Replace these paths with your actual file paths
-  # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\756488.zip'
-  # # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\tartışma_1.zip'
-  # # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\775699.zip'
-  # xmi_path = r'E:\Thesis\Negation Detection in Turkish Biomedical Corpora\negation-detection-on-turkish-medical-corpora\annotated_dataset_processing\tartışma_2.zip'
-  # typesystem_paths = [r"C:\Users\cardcentric\Downloads\796005\TypeSystem.xml"]
-
-  # # for xmi_path, typesystem_path in zip(xmi_paths, typesystem_paths):
-  # #     document = Document(xmi_path, annotation_data)
-  # #     document.load()
-  # #     annotation_data.add_document(document)
-  # document = Document(xmi_path, annotation_data)
-  # annotation_data.add_document(document)
-  # annotation_data.process_all_documents(resetIndexes=False)
-  # a = annotation_data.labeled_dataset
-  # b = annotation_data.sentence_dataset
-  # #print(annotation_data.negation_count, annotation_data.multi_negation_count)
