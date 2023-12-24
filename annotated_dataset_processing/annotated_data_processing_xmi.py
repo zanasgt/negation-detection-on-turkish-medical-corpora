@@ -44,41 +44,19 @@ class AnnotationData:
     self.documents.append(document)
     self.document_number += 1
     print("Document negations added to dataset..")
-    
-  # this function remoed and merged with add document event
-  # def process_all_documents(self, resetIndexes = True):
-  #   doc_number = 0
-  #   for document in self.documents:
-  #     # self.sentence_dataset = pd.concat([self.sentence_dataset, document.sentence_dataset], axis=0, join='outer')
-  #     # self.labeled_dataset = pd.concat([self.labeled_dataset, document.labeled_dataset], axis=0, join='outer')
-  #     self.sentence_dataset.insert(0, 'doc_number', doc_number)
-  #     self.labeled_dataset.insert(0, 'doc_number', doc_number)
-  #     doc_number += 1
-  #     print("Document negations added to dataset..")
-  #     # self.labeled_dataset = labeled_dataset
-  #     # print("Labeled results added to dataset..")
-  #     # self.indexed_dataset = indexed_dataset
-  #     # print("İndexed results added to dataset..")
-  #     # self.detail_dataset = detailed_dataset
-  #     # print("Detailed results added to dataset..")
   
 class Document():
   def __init__(self, xmi_path, dataset: AnnotationData):
     self.xmi_path = xmi_path
-    # self.typesystem_path = typesystem_path
     self.cas = None
     self.load()
     self.sentence_dataset = pd.DataFrame()
     self.labeled_dataset = pd.DataFrame()
+    self.max_sentence_neg_marker_number = 0
     self.process()
   def load(self):
     with open(xmi_path, 'rb') as f:
       self.cas = load_cas_from_zip_file(f)
-    # with open(self.typesystem_path, 'rb') as f:
-    #   typesystem = load_typesystem(f)
-
-    # with open(self.xmi_path, 'rb') as f:
-    #   self.cas = load_cas_from_xmi(f, typesystem=typesystem)
 
   def load_negation_features(self, feature_list):
     if feature_list:
@@ -87,17 +65,7 @@ class Document():
         item = {'begin': item.target.begin, 
                 'end': item.target.end,
                 'text': item.target.get_covered_text()}
-        # begin = item.target.begin
-        # end = item.target.end
-        # tar_text = item.target.get_covered_text()
         result.append(item)
-        # incase if needed as we will recor those feature by neme later
-        #tar_type = item.target.type.name.split('.')[-1]
-        #feature = {
-        #  "type":   tar_type,
-        #  "begin":  begin,
-        #  "end":    end,
-        #  "text":   tar_text}
       return result
     else:
       return None
@@ -226,6 +194,7 @@ class Document():
       sentence_id = 0
       sentence_set_id = 0
       processed_token_index = 0
+      max_sentence_neg_marker_number = 0
       
       # Sort tokens based on their 'begin' values it is already sorted in xmi
       # tokens.sort(key=lambda x: x.begin)
@@ -253,6 +222,9 @@ class Document():
           
           sentence_neg_markers = [item for item in negations_in_doc 
                               if sentence.begin <= item["cue"]["begin"] <= sentence.end]
+          
+          if len(sentence_neg_markers) > self.max_sentence_neg_marker_number:
+            self.max_sentence_neg_marker_number = len(sentence_neg_markers)
           
           if len(sentence_neg_markers):
             for neg_marker in sentence_neg_markers:
