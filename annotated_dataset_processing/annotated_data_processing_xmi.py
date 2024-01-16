@@ -435,3 +435,7 @@ if __name__ == "__main__":
       xmi_path = os.path.join(dirpath, filename)
       document = Document(xmi_path, annotation_data)
       annotation_data.add_document(document)
+    
+  a = annotation_data.labeled_dataset
+  for doc in annotation_data.documents:
+    print("max_sentence_neg_number is ", doc.max_sentence_neg_marker_number)
